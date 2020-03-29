@@ -25,19 +25,20 @@
 # CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE
+
 import socket
 import struct
 import time
 import numpy as np
 import datetime
-from multiprocessing import Process
-from threading import Thread
-
 import cv2
 import math
 
-from src.utils.templates.workerprocess import WorkerProcess
 from simple_pid import PID
+from multiprocessing import Process
+from threading import Thread
+
+from templates.workerprocess import WorkerProcess
 
 class CameraStreamer(WorkerProcess):
     pid = PID()
@@ -110,144 +111,12 @@ class CameraStreamer(WorkerProcess):
             Input pipe to read the frames from other process. 
         """
 
-        def laneKeeping(img):
-            height = 480
-            width = 640
-
-            img = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
-            img = img[(int(height/1.8)):height, 0:width]
-            img = cv2.GaussianBlur(img, (7,7), 0)
-
-            img = cv2.adaptiveThreshold(img, 255, cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY, 21, -8)
-
-            total = 0.0
-            lines = cv2.HoughLinesP(img, rho=6, theta=np.pi/60, threshold=160, lines=np.array([]), minLineLength=40, maxLineGap=25)
-
-            for line in lines:
-                for x1, y1, x2, y2 in line:
-                    if y2 == y1:
-                        total = total + 10000
-                    else:
-                        total = total + (x2 - x1) / (y2 - y1)
-
-            return total, img, lines
-
-
-        def draw_lines(img, lines, color=[255, 0, 0], thickness=3):	
-                # If there are no lines to draw, exit.	
-                if lines is None:	
-                    return	
-                # Make a copy of the original image.	
-                img = np.copy(img)	
-                # Create a blank image that matches the original in size.	
-                line_img = np.zeros(	
-                    (	
-                        img.shape[0],	
-                        img.shape[1],	
-                        3	
-                    ),	
-                    dtype=np.uint8,	
-                )	
-
-                # Loop over all lines and draw them on the blank image.	
-                for line in lines:	
-                    for x1, y1, x2, y2 in line:	
-                        cv2.line(line_img, (x1, y1), (x2, y2), color, thickness)	
-
-                # Merge the image with the lines onto the original.	
-                img = cv2.cvtColor(img, cv2.COLOR_GRAY2RGB)	
-                img = cv2.addWeighted(img, 0.8, line_img, 1.0, 0.0)	
-
-                # Return the modified image.	
-                return img	
-
-        def prepareMask(img):
-            kernel = np.ones((3, 3), np.uint8)
-            img = cv2.erode(img, kernel, iterations=1)
-            img = cv2.morphologyEx(img, cv2.MORPH_OPEN, kernel)
-
-            kernel = np.ones((5, 5), np.uint8)
-            img = cv2.dilate(img, kernel, iterations = 1)
-
-            return img
-
-        def signDetection(img):
-            original = img.copy()
-
-            # Crop top right corner
-            height = img.shape[0]
-            width = img.shape[1]
-            img = img[0:(int)(height/2), (int)(width/2):width]
-
-            height = img.shape[0]
-            width = img.shape[1]
-
-            # Remove noise
-            img = cv2.GaussianBlur(img, (5, 5), 0)
-
-            # Obtain hue
-            h, s, v = cv2.split(cv2.cvtColor(img, cv2.COLOR_BGR2HSV))
-
-            # Create masks for red, blue, yellow
-            ret, r1 = cv2.threshold(h, 112, 255, cv2.THRESH_BINARY)
-            ret, y1 = cv2.threshold(h, 107, 255, cv2.THRESH_BINARY)
-
-            h = cv2.bitwise_not(h)
-
-            ret, r2 = cv2.threshold(h, 131, 255, cv2.THRESH_BINARY)
-            ret, b = cv2.threshold(h, 250, 255, cv2.THRESH_BINARY)
-            ret, y2 = cv2.threshold(h, 145, 255, cv2.THRESH_BINARY)
-            
-            r = cv2.bitwise_and(r1, r2)
-            y = cv2.bitwise_and(y1, y2)
-
-            # Morphologies on masks
-            r = prepareMask(r)
-            b = prepareMask(b)
-            y = prepareMask(y)
-
-            # To display
-            h = cv2.cvtColor(h, cv2.COLOR_GRAY2BGR)
-            r = cv2.cvtColor(r, cv2.COLOR_GRAY2BGR)
-            b = cv2.cvtColor(b, cv2.COLOR_GRAY2BGR)
-            y = cv2.cvtColor(y, cv2.COLOR_GRAY2BGR)
-
-            topRow = np.concatenate((img, r), axis = 1)
-            bottomRow = np.concatenate((b, y), axis = 1)
-            img = np.concatenate((topRow, bottomRow), axis = 0)
-
-            return img
-        
         encode_param = [int(cv2.IMWRITE_JPEG_QUALITY), 70]
         print('Start streaming')
 
         while True:
             try:
                 stamps, img = inP.recv()
-
-                val, img, lines = laneKeeping(img)
-                img = draw_lines(img, lines)
-
-                #val = self.pid(val)
-                #print(val)
-
-                #f = open("log.txt", "a")
-
-                #now = datetime.datetime.now()
-                #f.write(str(now.strftime("\n %Y-%m-%d %H:%M:%S  -  ")))
-
-                #val = str(val)
-                #f.write(val)
-
-                #f.close()
-
-                #img = signDetection(img)
-
-                #height = img.shape[0]
-                #width = img.shape[1]
-
-                #img = img[(int(0.7*height)):(int(0.9*height)), (int(0.3*width)):(int(0.7*width))]
-
                 result, img = cv2.imencode('.jpg', img, encode_param)
                 data   =  img.tobytes()
                 size   =  len(data)
