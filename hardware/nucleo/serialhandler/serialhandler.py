@@ -34,7 +34,7 @@ from multiprocessing import Event
 from templates.workerprocess                    import WorkerProcess
 from hardware.nucleo.serialhandler.filehandler  import FileHandler
 from hardware.nucleo.serialhandler.readthread   import ReadThread
-from hardware.serialhandler.writethread         import WriteThread
+from hardware.nucleo.serialhandler.writethread  import WriteThread
 
 
 class SerialHandler(WorkerProcess):
