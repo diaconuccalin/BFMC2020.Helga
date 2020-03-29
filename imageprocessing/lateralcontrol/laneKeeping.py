@@ -109,7 +109,7 @@ class LaneKeeping(WorkerProcess):
                 val = self.laneKeeping(img)
 
                 # Compute steering angle
-                val = self.computeSteeringAngle
+                val = self.computeSteeringAngle(val)
 
                 # Print steering angle value
                 print(val)
