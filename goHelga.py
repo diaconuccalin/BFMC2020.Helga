@@ -57,20 +57,20 @@ if enableLateralControl:
     lkProc = LaneKeeping([lkR], [lcS])
     allProcesses.append(lkProc)
 
+    # Movement control
+    cfProc = MovementControl(movementControlR, [cfS])
+    allProcesses.append(cfProc)
+
+    # Serial handler
+    shProc = SerialHandler([cfR], [])
+    allProcesses.append(shProc)
+
 # Sign detection
 if enableSignDetection:
     camOutPs.append(sdS)
 
     sdProc = SignDetection([sdR], [])
     allProcesses.append(sdProc)
-
-# Movement control
-cfProc = MovementControl(movementControlR, [cfS])
-allProcesses.append(cfProc)
-
-# Serial handler
-shProc = SerialHandler([cfR], [])
-allProcesses.append(shProc)
 
 # Camera process
 if enableStream or enableSignDetection or enableLateralControl:
