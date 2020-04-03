@@ -335,8 +335,8 @@ class SignDetection(WorkerProcess):
                 print("Stop")
                 
         for yellowSign in yellowSigns:
-            if isinstance(yellowSign, (list, np.ndarray)) and (yellowSign is not None) and isPriority(blueSign) < 0.1:
-                print("Parking")
+            if isinstance(yellowSign, (list, np.ndarray)) and (yellowSign is not None) and isPriority(yellowSign) < 0.1:
+                print("Priority")
 
         
     def _the_thread(self, inP):
