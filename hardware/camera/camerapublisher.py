@@ -83,6 +83,7 @@ class CameraPublisher(ThreadWithStop):
         self.camera.iso             =   0   # auto
 
         #self.camera.awb_mode        =   'off'
+        self.camera.awb_mode        =   'shade'
         
 
         self.imgSize                =   (640, 480)    # the actual image size
@@ -120,8 +121,6 @@ class CameraPublisher(ThreadWithStop):
         """Stream function that actually published the frames into the pipes. Certain 
         processing(reshape) is done to the image format. 
         """
-        i = 0
-
         while self._running:
             
             yield self._stream

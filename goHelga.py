@@ -11,12 +11,13 @@ from hardware.nucleo.serialhandler.serialhandler    import SerialHandler
 from hardware.camera.cameraprocess                  import CameraProcess
 from imageprocessing.lateralcontrol.laneKeeping     import LaneKeeping
 from hardware.camera.camerastreamer                 import CameraStreamer
+from imageprocessing.signdetection.signDetection    import SignDetection
 
 
 # Config
-enableLateralControl    =   True
 enableStream            =   False
-
+enableLateralControl    =   False
+enableSignDetection     =   True
 
 # Initilize processes
 allProcesses = list()
@@ -35,34 +36,46 @@ lcR, lcS = Pipe(duplex = False)
 # Movement control -> Serial handler
 cfR, cfS = Pipe(duplex = False)
 
+# Camera process -> Sign detection
+sdR, sdS = Pipe(duplex = False)
+
+# Pipe collections
+movementControlR = []
+camOutPs = []
 
 # Processes:
+if enableStream:
+    camOutPs.append(camStS)
+
+    streamProc = CameraStreamer([camStR], [])
+    allProcesses.append(streamProc)
+
+if enableLateralControl:
+    camOutPs.append(lkS)
+    movementControlR.append(lcR)
+
+    lkProc = LaneKeeping([lkR], [lcS])
+    allProcesses.append(lkProc)
+
+# Sign detection
+if enableSignDetection:
+    camOutPs.append(sdS)
+
+    sdProc = SignDetection([sdR], [])
+    allProcesses.append(sdProc)
+
 # Movement control
-cfProc = MovementControl([lcR], [cfS])
+cfProc = MovementControl(movementControlR, [cfS])
 allProcesses.append(cfProc)
 
 # Serial handler
 shProc = SerialHandler([cfR], [])
 allProcesses.append(shProc)
 
-if enableLateralControl:
-    camOutPs = []
-
-    if enableStream:
-        camOutPs = [lkS, camStS]
-        # Camera streamer
-        streamProc = CameraStreamer([camStR], [])
-        allProcesses.append(streamProc)
-    else:
-        camOutPs = [lkS]
-
-    # Camera process
+# Camera process
+if enableStream or enableSignDetection or enableLateralControl:
     camProc = CameraProcess([],camOutPs)
     allProcesses.append(camProc)
-
-    # Lane keeping
-    lkProc = LaneKeeping([lkR], [lcS])
-    allProcesses.append(lkProc)
 
 
 # Start processes
