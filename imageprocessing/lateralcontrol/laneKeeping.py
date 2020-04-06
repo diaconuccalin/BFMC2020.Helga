@@ -106,7 +106,7 @@ class LaneKeeping(WorkerProcess):
         newVal = self.pid(val)
 
         # Calibrate result
-        newVal = val / 4
+        newVal = val / 6
 
         newVal = -newVal
 
@@ -134,7 +134,7 @@ class LaneKeeping(WorkerProcess):
                 val = self.computeSteeringAngle(val)
 
                 # Print steering angle value
-                print(val)
+                #print(val)
 
                 # Send steering angle value
                 outP.send(val)
