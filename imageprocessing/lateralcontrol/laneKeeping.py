@@ -86,7 +86,7 @@ class LaneKeeping(WorkerProcess):
         newVal = self.pid(val)
 
         # Calibrate result
-        newVal = val / 3.25
+        newVal = val / 3.15
 
         newVal = -newVal
 
