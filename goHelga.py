@@ -15,9 +15,9 @@ from imageprocessing.signdetection.signDetection    import SignDetection
 
 
 # Config
-enableStream            =   False
-enableLateralControl    =   False
-enableSignDetection     =   True
+enableStream            =   True
+enableLateralControl    =   True
+enableSignDetection     =   False
 
 # Initilize processes
 allProcesses = list()
