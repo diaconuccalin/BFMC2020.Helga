@@ -69,6 +69,26 @@ class LaneKeeping(WorkerProcess):
         # Apply adaptive threshold to obtain the road markings
         img = cv2.adaptiveThreshold(img, 255, cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY, 21, -8)
 
+        # Keep only a trapezoid containing the lines of the current lane
+        region_of_interest_vertices = [
+                (0, height - 1),
+                (0.25*width, 0),
+                (0.75*width, 0),
+                (width - 1, height - 1),
+        ]
+
+        def region_of_interest(img, vertices):
+            mask = np.zeros_like(img)
+            match_mask_color = (255,)
+            cv2.fillPoly(mask, vertices, match_mask_color)
+            masked_image = cv2.bitwise_and(img, mask)
+            return masked_image
+
+        img = region_of_interest(
+            img,
+            np.array([region_of_interest_vertices], np.int32),
+        )
+
         # Compute the hough lines from the image
         total = 0.0
         lines = cv2.HoughLinesP(img, rho=6, theta=np.pi/60, threshold=160, lines=np.array([]), minLineLength=40, maxLineGap=25)
