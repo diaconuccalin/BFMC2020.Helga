@@ -88,6 +88,8 @@ class LaneKeeping(WorkerProcess):
         # Calibrate result
         newVal = val / 3.5
 
+        newVal = -newVal
+
         return newVal
         
     def _the_thread(self, inP, outP):
