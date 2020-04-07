@@ -16,7 +16,7 @@ class MovementControl(WorkerProcess):
         """
         # Initialize parameters
         self.angle = 0.0
-        self.speed = 19
+        self.speed = 18
 
         super(MovementControl,self).__init__(inPs, outPs)
 
@@ -74,7 +74,7 @@ class MovementControl(WorkerProcess):
                 if value == 0:
                     self.speed = 0.0
                 if value == 1:
-                    self.speed = 17.0
+                    self.speed = 16.0
 
                 self._singleUpdate(outPs)
             except Exception as e:

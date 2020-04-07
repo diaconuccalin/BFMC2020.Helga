@@ -104,6 +104,7 @@ class SignDetection(WorkerProcess):
 
         # Check if image corresponds to parking sign
         def isParking(sign):
+            print("Enter parking")
             # Check if sign is not empty
             if(sign is None) or (elements(sign) == 0):
                 return 1.0
@@ -144,6 +145,7 @@ class SignDetection(WorkerProcess):
 
         # Check if image corresponds to crosswalk sign
         def isCrosswalk(sign):
+            print("enter crosswalk")
             # Check if sign is not empty
             if(sign is None) or (elements(sign) == 0):
                 return 1.0
