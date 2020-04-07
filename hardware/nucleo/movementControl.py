@@ -1,3 +1,5 @@
+import time
+
 from threading import Thread
 
 from templates.workerprocess import WorkerProcess
@@ -75,7 +77,7 @@ class MovementControl(WorkerProcess):
                     self.speed = 0.0
                 if value == 1:
                     self.speed = 0.0
-                    sleep(2)
+                    time.sleep(2)
                     self.speed = 17.0
 
                 self._singleUpdate(outPs)
