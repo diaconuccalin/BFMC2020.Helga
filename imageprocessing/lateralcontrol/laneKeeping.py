@@ -110,6 +110,8 @@ class LaneKeeping(WorkerProcess):
 
         newVal = -newVal
 
+        newVal += 3
+
         return newVal
         
     def _the_thread(self, inP, outP):
