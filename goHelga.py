@@ -39,6 +39,9 @@ cfR, cfS = Pipe(duplex = False)
 # Camera process -> Sign detection
 sdR, sdS = Pipe(duplex = False)
 
+# Sign detection -> Movement control
+smR, smS = Pipe(duplex = False)
+
 # Pipe collections
 movementControlR = []
 camOutPs = []
@@ -68,8 +71,9 @@ if enableLateralControl:
 # Sign detection
 if enableSignDetection:
     camOutPs.append(sdS)
+    movementControlR.append(smR)
 
-    sdProc = SignDetection([sdR], [])
+    sdProc = SignDetection([sdR], [smS])
     allProcesses.append(sdProc)
 
 # Camera process

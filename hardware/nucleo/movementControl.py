@@ -29,6 +29,9 @@ class MovementControl(WorkerProcess):
 
         sendTh = Thread(name='SteeringListen',target = self._listen_for_steering, args = (self.inPs[0], self.outPs, ))
         self.threads.append(sendTh)
+
+        signTh = Thread(name='SignListen',target = self._listen_for_stop, args = (self.inPs[0], self.outPs, ))
+        self.threads.append(signTh)
         
     def run(self):
         """Apply the initializing methods and start the threads
@@ -62,6 +65,16 @@ class MovementControl(WorkerProcess):
             except Exception as e:
                 print("Listening error:")
                 print(e)
+
+    def _listen_for_stop(self, inP, outPs):
+        while True:
+            try:
+                value = inP.recv()
+
+                if value == 0:
+                    self.speed = 0.0
+
+                self._singleUpdate(outPs)
 
     def _singleUpdate(self, outPs):
         """Update the state of the controls

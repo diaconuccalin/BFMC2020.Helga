@@ -25,6 +25,8 @@ class SignDetection(WorkerProcess):
         """
         super(SignDetection,self).__init__(inPs, outPs)
         
+        self.stopCount = 0
+        
     def run(self):
         """Apply the initializing methods and start the threads.
         """
@@ -36,13 +38,13 @@ class SignDetection(WorkerProcess):
         if self._blocker.is_set():
             return
 
-        thr = Thread(name='StreamSending',target = self._the_thread, args= (self.inPs[0], ))
+        thr = Thread(name='StreamSending',target = self._the_thread, args= (self.inPs[0], self.outPs, ))
         thr.daemon = True
         self.threads.append(thr)
 
 
     # ===================================== Custom methods =========================================
-    def detectSigns(self, img):
+    def detectSigns(self, img, outPs):
         """Applies required image processing. 
         
         Parameters
@@ -291,14 +293,14 @@ class SignDetection(WorkerProcess):
 
         # Create masks for red, blue yellow
         # Superior limit
-        ret, r2 = cv2.threshold(h, 255 - 140, 255, cv2.THRESH_BINARY)
+        ret, r2 = cv2.threshold(h, 255 - 142, 255, cv2.THRESH_BINARY)
         ret, b2 = cv2.threshold(h, 255 - 241, 255, cv2.THRESH_BINARY)
         ret, y2 = cv2.threshold(h, 255 - 162, 255, cv2.THRESH_BINARY)
 
         # Inferior limit
         h = cv2.bitwise_not(h)
 
-        ret, r1 = cv2.threshold(h, 133, 255, cv2.THRESH_BINARY)
+        ret, r1 = cv2.threshold(h, 138, 255, cv2.THRESH_BINARY)
         ret, b1 = cv2.threshold(h, 232, 255, cv2.THRESH_BINARY)
         ret, y1 = cv2.threshold(h, 157, 255, cv2.THRESH_BINARY)
 
@@ -324,22 +326,25 @@ class SignDetection(WorkerProcess):
         yellowSigns = getSigns(yellowRectangles, img)
 
         # Make second check based on shape
-        for blueSign in blueSigns:
-            if isinstance(blueSign, (list, np.ndarray)) and (blueSign is not None) and isParking(blueSign) < 0.8:
-                print("Parking")
+        #for blueSign in blueSigns:
+            #if isinstance(blueSign, (list, np.ndarray)) and (blueSign is not None) and isParking(blueSign) < 0.8:
+            #    print("Parking")
             #if isinstance(blueSign, (list, np.ndarray)) and (blueSign is not None) and isCrosswalk(blueSign) < 0.1:
             #    print("Crosswalk")
                 
-        #for redSign in redSigns:
-        #    if isinstance(redSign, (list, np.ndarray)) and (redSign is not None) and isStop(redSign) < 0.1:
-        #        print("Stop")
+        for redSign in redSigns:
+            if isinstance(redSign, (list, np.ndarray)) and (redSign is not None) and isStop(redSign) > 10.0:
+                self.stopCount += 1
+                if self.stopCount > 10:
+                    for outP in outPs:
+                        outP.send(0)
                 
         #for yellowSign in yellowSigns:
         #    if isinstance(yellowSign, (list, np.ndarray)) and (yellowSign is not None) and isPriority(yellowSign) < 0.1:
         #        print("Priority")
 
         
-    def _the_thread(self, inP):
+    def _the_thread(self, inP, outPs):
         """Obtains image, applies the required image processing and computes the steering angle value. 
         
         Parameters
@@ -355,7 +360,7 @@ class SignDetection(WorkerProcess):
                 stamps, img = inP.recv()
 
                 # Apply image processing
-                self.detectSigns(img)
+                self.detectSigns(img, outPs)
 
             except Exception as e:
                 print("Lane keeping error:")
