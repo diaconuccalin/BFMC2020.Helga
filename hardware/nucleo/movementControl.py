@@ -30,7 +30,7 @@ class MovementControl(WorkerProcess):
         sendTh = Thread(name='SteeringListen',target = self._listen_for_steering, args = (self.inPs[0], self.outPs, ))
         self.threads.append(sendTh)
 
-        signTh = Thread(name='SignListen',target = self._listen_for_stop, args = (self.inPs[0], self.outPs, ))
+        signTh = Thread(name='SignListen',target = self._listen_for_stop, args = (self.inPs[1], self.outPs, ))
         self.threads.append(signTh)
         
     def run(self):
