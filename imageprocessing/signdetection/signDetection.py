@@ -340,7 +340,7 @@ class SignDetection(WorkerProcess):
                 if self.crossCount > 5:
                     for outP in outPs:
                         outP.send(1)
-                    print("Crosswalk")
+                print("Crosswalk")
                 
         for redSign in redSigns:
             if isinstance(redSign, (list, np.ndarray)) and (redSign is not None) and isStop(redSign) > 10.0:
