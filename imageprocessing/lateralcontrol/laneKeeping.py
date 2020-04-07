@@ -13,7 +13,7 @@ from simple_pid         import PID
 from templates.workerprocess import WorkerProcess
 
 class LaneKeeping(WorkerProcess):
-    pid = PID(Kp = 1.25, Ki = 1.25, Kd = 0.05, setpoint = 2.5)
+    pid = PID(Kp = 1.25, Ki = 1.25, Kd = 0.05)
     
     # ===================================== Worker process =========================================
     def __init__(self, inPs, outPs):
@@ -98,6 +98,7 @@ class LaneKeeping(WorkerProcess):
             for x1, y1, x2, y2 in line:
                 if y2 != y1:
                     total = total + (x2 - x1) / (y2 - y1)
+                else: return 0.0
 
         return total
 
@@ -106,7 +107,7 @@ class LaneKeeping(WorkerProcess):
         newVal = self.pid(val)
 
         # Calibrate result
-        newVal = val / 5.5
+        newVal = val / 4.5
 
         newVal = -newVal
 
