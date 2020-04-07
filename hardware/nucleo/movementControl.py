@@ -75,6 +75,8 @@ class MovementControl(WorkerProcess):
                     self.speed = 0.0
 
                 self._singleUpdate(outPs)
+            except Exception as e:
+                print(e)
 
     def _singleUpdate(self, outPs):
         """Update the state of the controls
