@@ -104,7 +104,6 @@ class SignDetection(WorkerProcess):
 
         # Check if image corresponds to parking sign
         def isParking(sign):
-            print("Enter parking")
             # Check if sign is not empty
             if(sign is None) or (elements(sign) == 0):
                 return 1.0
@@ -343,16 +342,16 @@ class SignDetection(WorkerProcess):
                         outP.send(1)
                     print("Crosswalk")
                 
-        #for redSign in redSigns:
-        #    if isinstance(redSign, (list, np.ndarray)) and (redSign is not None) and isStop(redSign) > 10.0:
-        #        self.stopCount += 1
-        #        if self.stopCount > 35:
-        #            for outP in outPs:
-        #                outP.send(0)
+        for redSign in redSigns:
+            if isinstance(redSign, (list, np.ndarray)) and (redSign is not None) and isStop(redSign) > 10.0:
+                self.stopCount += 1
+                if self.stopCount > 35:
+                    for outP in outPs:
+                        outP.send(0)
                 
-        #for yellowSign in yellowSigns:
-        #    if isinstance(yellowSign, (list, np.ndarray)) and (yellowSign is not None) and isPriority(yellowSign) < 0.1:
-        #        print("Priority")
+        for yellowSign in yellowSigns:
+            if isinstance(yellowSign, (list, np.ndarray)) and (yellowSign is not None) and isPriority(yellowSign) < 0.1:
+                print("Priority")
 
         
     def _the_thread(self, inP, outPs):
