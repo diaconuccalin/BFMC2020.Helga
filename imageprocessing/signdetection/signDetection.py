@@ -335,7 +335,7 @@ class SignDetection(WorkerProcess):
         for redSign in redSigns:
             if isinstance(redSign, (list, np.ndarray)) and (redSign is not None) and isStop(redSign) > 10.0:
                 self.stopCount += 1
-                if self.stopCount > 10:
+                if self.stopCount > 40:
                     for outP in outPs:
                         outP.send(0)
                 
