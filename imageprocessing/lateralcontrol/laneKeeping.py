@@ -137,7 +137,7 @@ class LaneKeeping(WorkerProcess):
                 val = self.computeSteeringAngle(val)
 
                 # Print steering angle value
-                print(val)
+                #print(val)
 
                 # Send steering angle value
                 outP.send(val)
