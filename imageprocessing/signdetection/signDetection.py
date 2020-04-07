@@ -339,7 +339,7 @@ class SignDetection(WorkerProcess):
                 print("Parking")
             if isinstance(blueSign, (list, np.ndarray)) and (blueSign is not None) and isCrosswalk(blueSign) < 0.1:
                 self.crossCount += 1
-                if self.crossCount > 10:
+                if self.crossCount > 5:
                     for outP in outPs:
                         outP.send(1)
                     print("Crosswalk")
