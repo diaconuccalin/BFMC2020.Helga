@@ -111,7 +111,7 @@ class LaneKeeping(WorkerProcess):
 
         newVal = -newVal
 
-        newVal += 3.3
+        newVal += 3.1
 
         return newVal
         
