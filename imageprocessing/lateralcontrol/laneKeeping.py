@@ -13,7 +13,7 @@ from simple_pid         import PID
 from templates.workerprocess import WorkerProcess
 
 class LaneKeeping(WorkerProcess):
-    pid = PID(Kp = 1.25, Ki = 1.25, Kd = 0.05, setpoint = 0.0)
+    pid = PID(Kp = 1.25, Ki = 1.25, Kd = 0.05, setpoint = 2.5)
     
     # ===================================== Worker process =========================================
     def __init__(self, inPs, outPs):
