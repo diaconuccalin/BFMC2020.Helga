@@ -13,7 +13,7 @@ from simple_pid         import PID
 from templates.workerprocess import WorkerProcess
 
 class LaneKeeping(WorkerProcess):
-    pid = PID(Kp = 0.5, Ki = 1.5, Kd = 0.05)
+    pid = PID(Kp = 0.25, Ki = 1.5, Kd = 0.05)
     
     # ===================================== Worker process =========================================
     def __init__(self, inPs, outPs):
@@ -134,7 +134,7 @@ class LaneKeeping(WorkerProcess):
                 val = self.computeSteeringAngle(val)
 
                 # Print steering angle value
-                #print(val)
+                print(val)
 
                 # Send steering angle value
                 outP.send(val)
