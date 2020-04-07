@@ -27,7 +27,7 @@ class SignDetection(WorkerProcess):
         
         self.stopCount = 0
         self.parkCount = 0
-        self.crossCount = 4
+        self.crossCount = 0
         self.firstCross = True
         
     def run(self):
@@ -332,11 +332,11 @@ class SignDetection(WorkerProcess):
         for blueSign in blueSigns:
             if isinstance(blueSign, (list, np.ndarray)) and (blueSign is not None) and isParking(blueSign) < 0.1:
                 self.parkCount += 1
-                if self.parkCount > 13:
+                if self.parkCount > 10:
                     for outP in outPs:
                         outP.send(0)
                 print("Parking")
-            if isinstance(blueSign, (list, np.ndarray)) and (blueSign is not None) and isCrosswalk(blueSign) < 1.5:
+            if isinstance(blueSign, (list, np.ndarray)) and (blueSign is not None) and isCrosswalk(blueSign) < 1.3:
                 self.crossCount += 1
                 if self.crossCount > 8 and self.firstCross is True :
                     self.firstCross = False
