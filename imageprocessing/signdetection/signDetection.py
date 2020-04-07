@@ -332,7 +332,7 @@ class SignDetection(WorkerProcess):
         for blueSign in blueSigns:
             if isinstance(blueSign, (list, np.ndarray)) and (blueSign is not None) and isParking(blueSign) < 0.1:
                 self.parkCount += 1
-                if self.parkCount > 20:
+                if self.parkCount > 13:
                     for outP in outPs:
                         outP.send(0)
                 print("Parking")
