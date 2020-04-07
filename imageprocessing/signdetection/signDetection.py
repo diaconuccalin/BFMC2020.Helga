@@ -26,6 +26,8 @@ class SignDetection(WorkerProcess):
         super(SignDetection,self).__init__(inPs, outPs)
         
         self.stopCount = 0
+        self.parkCount = 0
+        self.crossCount = 0
         
     def run(self):
         """Apply the initializing methods and start the threads.
@@ -326,18 +328,26 @@ class SignDetection(WorkerProcess):
         yellowSigns = getSigns(yellowRectangles, img)
 
         # Make second check based on shape
-        #for blueSign in blueSigns:
-            #if isinstance(blueSign, (list, np.ndarray)) and (blueSign is not None) and isParking(blueSign) < 0.8:
-            #    print("Parking")
-            #if isinstance(blueSign, (list, np.ndarray)) and (blueSign is not None) and isCrosswalk(blueSign) < 0.1:
-            #    print("Crosswalk")
-                
-        for redSign in redSigns:
-            if isinstance(redSign, (list, np.ndarray)) and (redSign is not None) and isStop(redSign) > 10.0:
-                self.stopCount += 1
-                if self.stopCount > 35:
+        for blueSign in blueSigns:
+            if isinstance(blueSign, (list, np.ndarray)) and (blueSign is not None) and isParking(blueSign) < 0.5:
+                self.parkCount += 1
+                if self.parkCount > 10:
                     for outP in outPs:
                         outP.send(0)
+                print("Parking")
+            if isinstance(blueSign, (list, np.ndarray)) and (blueSign is not None) and isCrosswalk(blueSign) < 0.1:
+                self.crossCount += 1
+                if self.crossCount > 10:
+                    for outP in outPs:
+                        outP.send(1)
+                    print("Crosswalk")
+                
+        #for redSign in redSigns:
+        #    if isinstance(redSign, (list, np.ndarray)) and (redSign is not None) and isStop(redSign) > 10.0:
+        #        self.stopCount += 1
+        #        if self.stopCount > 35:
+        #            for outP in outPs:
+        #                outP.send(0)
                 
         #for yellowSign in yellowSigns:
         #    if isinstance(yellowSign, (list, np.ndarray)) and (yellowSign is not None) and isPriority(yellowSign) < 0.1:
