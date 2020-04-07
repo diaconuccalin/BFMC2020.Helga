@@ -74,7 +74,7 @@ class MovementControl(WorkerProcess):
                 if value == 0:
                     self.speed = 0.0
                 if value == 1:
-                    self.speed = 16.0
+                    self.speed = 12.0
 
                 self._singleUpdate(outPs)
             except Exception as e:
