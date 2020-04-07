@@ -291,16 +291,16 @@ class SignDetection(WorkerProcess):
 
         # Create masks for red, blue yellow
         # Superior limit
-        ret, r2 = cv2.threshold(h, 255 - 127, 255, cv2.THRESH_BINARY)
-        ret, b2 = cv2.threshold(h, 255 - 247, 255, cv2.THRESH_BINARY)
-        ret, y2 = cv2.threshold(h, 255 - 159, 255, cv2.THRESH_BINARY)
+        ret, r2 = cv2.threshold(h, 255 - 140, 255, cv2.THRESH_BINARY)
+        ret, b2 = cv2.threshold(h, 255 - 241, 255, cv2.THRESH_BINARY)
+        ret, y2 = cv2.threshold(h, 255 - 162, 255, cv2.THRESH_BINARY)
 
         # Inferior limit
         h = cv2.bitwise_not(h)
 
-        ret, r1 = cv2.threshold(h, 122, 255, cv2.THRESH_BINARY)
-        ret, b1 = cv2.threshold(h, 242, 255, cv2.THRESH_BINARY)
-        ret, y1 = cv2.threshold(h, 154, 255, cv2.THRESH_BINARY)
+        ret, r1 = cv2.threshold(h, 133, 255, cv2.THRESH_BINARY)
+        ret, b1 = cv2.threshold(h, 232, 255, cv2.THRESH_BINARY)
+        ret, y1 = cv2.threshold(h, 157, 255, cv2.THRESH_BINARY)
 
         # Intersection
         r = cv2.bitwise_and(r1, r2)
@@ -327,16 +327,16 @@ class SignDetection(WorkerProcess):
         for blueSign in blueSigns:
             if isinstance(blueSign, (list, np.ndarray)) and (blueSign is not None) and isParking(blueSign) < 0.1:
                 print("Parking")
-            if isinstance(blueSign, (list, np.ndarray)) and (blueSign is not None) and isCrosswalk(blueSign) < 0.1:
-                print("Crosswalk")
+            #if isinstance(blueSign, (list, np.ndarray)) and (blueSign is not None) and isCrosswalk(blueSign) < 0.1:
+            #    print("Crosswalk")
                 
-        for redSign in redSigns:
-            if isinstance(redSign, (list, np.ndarray)) and (redSign is not None) and isStop(redSign) < 0.1:
-                print("Stop")
+        #for redSign in redSigns:
+        #    if isinstance(redSign, (list, np.ndarray)) and (redSign is not None) and isStop(redSign) < 0.1:
+        #        print("Stop")
                 
-        for yellowSign in yellowSigns:
-            if isinstance(yellowSign, (list, np.ndarray)) and (yellowSign is not None) and isPriority(yellowSign) < 0.1:
-                print("Priority")
+        #for yellowSign in yellowSigns:
+        #    if isinstance(yellowSign, (list, np.ndarray)) and (yellowSign is not None) and isPriority(yellowSign) < 0.1:
+        #        print("Priority")
 
         
     def _the_thread(self, inP):
