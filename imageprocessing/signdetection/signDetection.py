@@ -27,7 +27,7 @@ class SignDetection(WorkerProcess):
         
         self.stopCount = 0
         self.parkCount = 0
-        self.crossCount = 0
+        self.crossCount = 4
         self.firstCross = True
         
     def run(self):
