@@ -330,7 +330,7 @@ class SignDetection(WorkerProcess):
 
         # Make second check based on shape
         for blueSign in blueSigns:
-            if isinstance(blueSign, (list, np.ndarray)) and (blueSign is not None) and isParking(blueSign) < 0.25:
+            if isinstance(blueSign, (list, np.ndarray)) and (blueSign is not None) and isParking(blueSign) < 0.28:
                 self.parkCount += 1
                 if self.parkCount > 3:
                     for outP in outPs:
